@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>스테이크 설치하기</title>
+<meta name="description" content="원하는 굽기를 고르면 시즈닝부터 레스팅까지 초 단위로 알려주는 스테이크 타이머를 안드로이드와 아이폰에 설치하세요.">
+<meta property="og:title" content="스테이크 설치하기">
+<meta property="og:description" content="굽기만 고르면 시즈닝부터 레스팅까지 다 알려주는 스테이크 타이머">
+<meta property="og:image" content="https://lkj56497.github.io/steak/icon-512.png">
+<link rel="icon" href="https://lkj56497.github.io/steak/icon-192.png">
+<link rel="apple-touch-icon" href="https://lkj56497.github.io/steak/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: 한 장짜리 설치 안내. 위에 앱 소개, 기기 탭(안드로이드/아이폰), 탭마다 큰 버튼 + 번호 순서 */
+:root{
+  --bg:#F6F1EC; --surface:#FFFFFF; --fg:#221A16; --muted:#6E625B; --line:#E5DBD3;
+  --yolk:#D9480F; --yolk-ink:#FFFFFF; --pepper:#B3243A; --leaf:#2E7D4F; --chip:#EFE6DE;
+  --display:"Black Han Sans","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#161210; --surface:#211B18; --fg:#F3ECE7; --muted:#A89A91; --line:#3A2F2A;
+  --yolk:#FF6B2C; --yolk-ink:#1A0B03; --pepper:#F0735C; --leaf:#5CC28A; --chip:#2B231F; color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:calc(20px + env(safe-area-inset-top,0px)) calc(48px + env(safe-area-inset-bottom,0px));-webkit-tap-highlight-color:transparent}
+.wrap{max-width:620px;margin:0 auto}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--yolk);outline-offset:2px}
+.hero{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;padding-block:8px 20px}
+.hero img{width:76px;height:76px;border-radius:18px;box-shadow:0 4px 14px rgb(0 0 0/.12)}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,8vw,40px);line-height:1.05;margin:0}
+.hero p{margin:6px 0 0;color:var(--muted);font-size:15px}
+.feats{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 22px;padding:0;list-style:none}
+.feats li{font-size:13px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--chip);padding:4px;border-radius:14px;margin-bottom:14px}
+.tabs button{font:inherit;font-size:15px;border:0;background:transparent;color:var(--muted);border-radius:11px;padding:11px 8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--fg);font-weight:700;box-shadow:0 1px 3px rgb(0 0 0/.1)}
+.tabs svg{width:18px;height:18px;flex:none}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px}
+.detected{display:inline-block;font-size:12px;font-weight:700;background:var(--leaf);color:#fff;border-radius:6px;padding:2px 8px;margin-bottom:10px}
+h2{font-family:var(--display);font-weight:400;font-size:24px;margin:0 0 4px}
+.lead{margin:0 0 16px;color:var(--muted);font-size:15px}
+.cta{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:56px;border:0;border-radius:14px;background:var(--fg);color:var(--bg);
+  font:inherit;font-size:17px;font-weight:700;text-decoration:none;cursor:pointer;padding:0 18px}
+.cta .sz{font-weight:500;opacity:.7;font-size:14px}
+.cta.alt{background:var(--yolk);color:var(--yolk-ink)}
+.warn{display:grid;grid-template-columns:auto 1fr;gap:10px;background:color-mix(in srgb,var(--pepper) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--pepper) 40%,var(--line));
+  border-radius:12px;padding:12px 14px;margin:0 0 14px;font-size:14px}
+.warn b.ic{width:22px;height:22px;border-radius:50%;background:var(--pepper);color:#fff;display:grid;place-items:center;font-size:13px}
+.warn .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.small-btn{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:10px;padding:8px 12px;cursor:pointer;text-decoration:none}
+ol.steps{list-style:none;counter-reset:s;margin:20px 0 0;padding:0;display:grid;gap:14px}
+ol.steps>li{counter-increment:s;display:grid;grid-template-columns:32px 1fr;gap:12px;align-items:start}
+ol.steps>li::before{content:counter(s);width:32px;height:32px;border-radius:50%;background:var(--yolk);color:var(--yolk-ink);display:grid;place-items:center;font-weight:700;font-size:15px}
+.st>b{display:block;font-size:16px;line-height:1.4;margin-top:4px}
+.st p{margin:3px 0 0;color:var(--muted);font-size:14px}
+.key{display:inline-flex;align-items:center;gap:4px;background:var(--chip);border-radius:6px;padding:0 7px;font-size:13px;font-weight:600;color:var(--fg);white-space:nowrap;vertical-align:1px}
+.key svg{width:14px;height:14px}
+.qr{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.qr .box{width:128px;height:128px;background:#fff;border-radius:10px;padding:8px;display:grid;place-items:center}
+.qr .box img,.qr .box canvas{width:112px!important;height:112px!important}
+.qr p{margin:0;font-size:14px;color:var(--muted)}
+.qr code{display:block;margin-top:6px;font-size:13px;color:var(--fg);word-break:break-all}
+details.faq{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+details.faq summary{cursor:pointer;padding:14px 16px;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:8px}
+details.faq summary::-webkit-details-marker{display:none}
+details.faq summary::after{content:"+";color:var(--muted);font-weight:400}
+details.faq[open] summary::after{content:"−"}
+details.faq div{padding:0 16px 14px;font-size:14px;color:var(--muted)}
+details.faq div p{margin:0 0 8px}
+footer{margin-top:22px;font-size:12px;color:var(--muted);text-align:center}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <img src="icon-192.png" alt="스테이크 앱 아이콘" width="76" height="76">
+    <div>
+      <h1>스테이크</h1>
+      <p>원하는 굽기를 고르면 시즈닝부터 굽기·뒤집기·레스팅까지 초 단위로 알려줘요.</p>
+    </div>
+  </header>
+  <ul class="feats">
+    <li>굽기 6단계</li><li>두께·부위·팬별 시간 계산</li><li>소금·버터 양 계산</li><li>뒤집을 때 소리·음성 알림</li><li>인터넷 없이도 사용</li>
+  </ul>
+
+  <div class="tabs" role="tablist" aria-label="기기 선택">
+    <button role="tab" id="tab-android" aria-controls="p-android" aria-selected="true" type="button">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 18c0 .55.45 1 1 1h1v3.5a1.5 1.5 0 0 0 3 0V19h2v3.5a1.5 1.5 0 0 0 3 0V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8A1.5 1.5 0 0 0 2 9.5v7a1.5 1.5 0 0 0 3 0v-7A1.5 1.5 0 0 0 3.5 8zm17 0a1.5 1.5 0 0 0-1.5 1.5v7a1.5 1.5 0 0 0 3 0v-7A1.5 1.5 0 0 0 20.5 8zm-4.97-5.84 1.3-1.3a.5.5 0 1 0-.71-.7l-1.48 1.48A5.86 5.86 0 0 0 12 1c-.96 0-1.86.23-2.66.63L7.85.15a.5.5 0 1 0-.71.71l1.31 1.31A5.98 5.98 0 0 0 6 7h12a5.98 5.98 0 0 0-2.47-4.84zM10 5H9V4h1v1zm5 0h-1V4h1v1z"/></svg>
+      안드로이드</button>
+    <button role="tab" id="tab-ios" aria-controls="p-ios" aria-selected="false" type="button">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.62c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.47.83-.72 0-1.82-.81-2.99-.79-1.54.02-2.96.9-3.75 2.27-1.6 2.78-.41 6.89 1.15 9.14.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.78.74 2.99.72 1.24-.02 2.02-1.12 2.77-2.23.87-1.28 1.23-2.52 1.25-2.58-.03-.01-2.4-.92-2.42-3.66zM14.1 5.86c.63-.77 1.06-1.83.94-2.89-.91.04-2.01.61-2.67 1.37-.58.67-1.09 1.76-.96 2.79 1.02.08 2.06-.52 2.69-1.27z"/></svg>
+      아이폰</button>
+  </div>
+
+  <!-- ANDROID -->
+  <section class="panel" id="p-android" role="tabpanel" aria-labelledby="tab-android">
+    <span class="detected" id="det-android" hidden>지금 쓰는 기기예요</span>
+    <h2>안드로이드에 설치</h2>
+    <p class="lead">설치 파일을 받아 바로 설치해요. 1분이면 끝나요.</p>
+    <div class="warn" id="inapp-android" hidden><b class="ic">!</b><div>카카오톡·인스타그램 안에서 열린 화면에서는 다운로드가 안 될 수 있어요. 오른쪽 위 <b>⋮</b> 메뉴에서 <b>다른 브라우저로 열기</b>(Chrome)를 눌러주세요.</div></div>
+    <a class="cta" href="steak.apk" download="스테이크.apk" id="apkbtn">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>
+      설치 파일 받기 <span class="sz">약 120KB</span></a>
+    <ol class="steps">
+      <li><div class="st"><b>위 버튼을 눌러 다운로드</b><p>"이 유형의 파일은 기기에 해를 끼칠 수 있습니다" 같은 경고가 뜨면 <span class="key">다운로드</span>를 누르세요. 스토어 밖에서 받는 파일이라 뜨는 안내예요.</p></div></li>
+      <li><div class="st"><b>다운로드한 파일 열기</b><p>화면 아래 완료 알림의 <span class="key">열기</span>를 누르세요. 알림을 놓쳤다면 <span class="key">내 파일 → 다운로드</span>에서 <b>스테이크.apk</b>를 누르면 돼요.</p></div></li>
+      <li><div class="st"><b>"출처를 알 수 없는 앱" 허용</b><p>처음 한 번만 나와요. <span class="key">설정</span>을 누르고 <span class="key">이 출처 허용</span>을 켠 뒤 뒤로 돌아오세요.</p></div></li>
+      <li><div class="st"><b>설치 누르기</b><p>Play 프로텍트가 "확인되지 않은 앱"이라고 하면 <span class="key">세부정보 더보기</span> → <span class="key">무시하고 설치</span>를 누르세요. 개인이 만든 앱이라 뜨는 안내예요.</p></div></li>
+      <li><div class="st"><b>열기</b><p>설치가 끝나면 앱 목록에 주황색 스톱워치 아이콘 <b>스테이크</b>가 생겨요. 처음 열 때 <span class="key">알림 허용</span>을 눌러야 화면이 꺼져도 알람이 울려요.</p></div></li>
+    </ol>
+  </section>
+
+  <!-- IOS -->
+  <section class="panel" id="p-ios" role="tabpanel" aria-labelledby="tab-ios" hidden>
+    <span class="detected" id="det-ios" hidden>지금 쓰는 기기예요</span>
+    <h2>아이폰에 설치</h2>
+    <p class="lead">사파리에서 앱 페이지를 연 뒤 <b>홈 화면에 추가</b>하면 앱처럼 쓸 수 있어요. 앱스토어는 필요 없어요.</p>
+    <div class="warn" id="inapp-ios" hidden><b class="ic">!</b><div>
+      지금은 카카오톡·인스타그램 같은 앱 안에서 열려 있어서 <b>홈 화면에 추가</b>를 할 수 없어요. <b>사파리</b>로 열어주세요.
+      <div class="row"><a class="small-btn" id="kakaoOpen" hidden>사파리로 열기</a><button class="small-btn" type="button" data-copy>링크 복사</button></div>
+      <div style="margin-top:6px">복사한 링크를 사파리 주소창에 붙여넣거나, 화면 아래 <b>⋯</b>·<b>공유</b> 메뉴에서 <b>Safari로 열기</b>를 찾아 누르세요.</div>
+    </div></div>
+    <a class="cta alt" href="https://lkj56497.github.io/steak/" id="iosbtn">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>
+      사파리에서 앱 페이지 열기</a>
+    <ol class="steps">
+      <li><div class="st"><b>위 버튼으로 앱 페이지 열기</b><p>꼭 <b>사파리</b>에서 열어야 해요. 스테이크 화면이 나오면 다음으로 넘어가세요.</p></div></li>
+      <li><div class="st"><b>공유 버튼 누르기</b><p>화면 아래(또는 주소창 옆)의 <span class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>공유</span>를 누르세요. 공유 버튼이 안 보이면 <span class="key">⋯</span> 버튼을 먼저 누르면 나와요.</p></div></li>
+      <li><div class="st"><b>"홈 화면에 추가" 선택</b><p>메뉴를 아래로 내리면 <span class="key">⊕ 홈 화면에 추가</span>가 있어요. 안 보이면 <span class="key">더 보기</span>를 눌러 찾으세요.</p></div></li>
+      <li><div class="st"><b>"웹 앱으로 열기" 켜고 추가</b><p>이름은 <b>스테이크</b> 그대로 두고, <span class="key">웹 앱으로 열기</span> 스위치가 있으면 켜둔 채 오른쪽 위 <span class="key">추가</span>를 누르세요.</p></div></li>
+      <li><div class="st"><b>홈 화면에서 실행</b><p>주황색 스톱워치 아이콘이 생겨요. 누르면 주소창 없이 앱처럼 열리고, 한 번 연 뒤에는 인터넷이 없어도 쓸 수 있어요.</p></div></li>
+    </ol>
+  </section>
+
+  <div class="panel qr" id="qr" hidden>
+    <div class="box" id="qrbox" aria-label="이 설치 페이지 QR 코드"></div>
+    <p><b style="color:var(--fg)">휴대폰으로 이 페이지 열기</b><br>카메라로 QR 코드를 찍으면 휴대폰에서 바로 설치할 수 있어요.<code id="pageurl"></code></p>
+  </div>
+
+  <details class="faq">
+    <summary>업데이트는 어떻게 하나요?</summary>
+    <div><p><b>안드로이드</b>: 이 페이지에서 설치 파일을 다시 받아 설치하면 기존 앱 위에 덮어써져요. 고른 설정은 그대로 남아요.</p>
+    <p><b>아이폰</b>: 따로 할 건 없어요. 앱을 열면 새 버전을 받아두고, 완전히 닫았다 다시 열면 바뀌어요.</p></div>
+  </details>
+  <details class="faq">
+    <summary>화면이 꺼져도 알람이 울리나요?</summary>
+    <div><p><b>안드로이드</b>: 네. 굽는 동안 화면이 꺼지지 않게 해두고, 다른 앱을 보고 있어도 뒤집을 때마다 알림이 울려요. 처음 열 때 알림을 허용해 주세요.</p>
+    <p><b>아이폰</b>: 홈 화면 앱은 화면이 꺼지거나 다른 앱으로 가면 소리를 낼 수 없어요. 굽는 동안에는 스테이크 화면을 켜둔 채로 두세요. 무음 모드에서는 삐 소리가 작게 날 수 있어요.</p></div>
+  </details>
+  <details class="faq">
+    <summary>앱을 지우려면요?</summary>
+    <div><p>다른 앱과 똑같아요. 홈 화면에서 아이콘을 길게 눌러 <b>삭제</b>(아이폰) 또는 <b>제거</b>(안드로이드)를 누르세요.</p></div>
+  </details>
+
+</div>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function(){
+  const APP="https://lkj56497.github.io/steak/";
+  const ua=navigator.userAgent||"";
+  const isIOS=/iPhone|iPad|iPod/i.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  const isAndroid=/Android/i.test(ua);
+  const inApp=/KAKAOTALK|Instagram|FBAN|FBAV|NAVER\(|Line\/|DaumApps|everytimeApp|BAND\//i.test(ua);
+  const $=id=>document.getElementById(id);
+  const tabs={android:$("tab-android"),ios:$("tab-ios")}, panels={android:$("p-android"),ios:$("p-ios")};
+  function show(k){for(const x in tabs){const on=x===k;tabs[x].setAttribute("aria-selected",on);panels[x].hidden=!on}}
+  tabs.android.onclick=()=>show("android"); tabs.ios.onclick=()=>show("ios");
+  if(isIOS){show("ios");$("det-ios").hidden=false;if(inApp)$("inapp-ios").hidden=false}
+  else if(isAndroid){show("android");$("det-android").hidden=false;if(inApp)$("inapp-android").hidden=false}
+  else{
+    $("qr").hidden=false;
+    const url=location.href.split("#")[0];
+    $("pageurl").textContent=url;
+    try{new QRCode($("qrbox"),{text:url,width:224,height:224,colorDark:"#1B2220",colorLight:"#ffffff"})}catch(e){$("qr").hidden=true}
+  }
+  if(isIOS&&/KAKAOTALK/i.test(ua)){const a=$("kakaoOpen");a.href="kakaotalk://web/openExternal?url="+encodeURIComponent(APP);a.hidden=false}
+  function toast(m){const t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,2200)}
+  document.querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>{
+    const done=()=>toast("링크를 복사했어요. 사파리 주소창에 붙여넣으세요");
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(APP).then(done,()=>fallback())}else fallback();
+    function fallback(){const ta=document.createElement("textarea");ta.value=APP;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();
+      try{document.execCommand("copy");done()}catch(e){toast(APP)}ta.remove()}
+  });
+})();
+</script>
+</body>
+</html>
