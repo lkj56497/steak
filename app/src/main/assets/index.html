@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>스테이크</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="스테이크">
+<meta name="theme-color" content="#F6F1EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161210" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#F6F1EC; --surface:#FFFFFF; --fg:#221A16; --muted:#6E625B; --line:#E5DBD3; --chip:#EFE6DE;
+  --ember:#D9480F; --ember-ink:#FFFFFF; --ember-soft:#FBE3D6; --ok:#2E7D4F;
+  --display:"Black Han Sans","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#161210; --surface:#211B18; --fg:#F3ECE7; --muted:#A89A91; --line:#3A2F2A; --chip:#2B231F;
+  --ember:#FF6B2C; --ember-ink:#1A0B03; --ember-soft:#3B2016; --ok:#5CC28A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161210; --surface:#211B18; --fg:#F3ECE7; --muted:#A89A91; --line:#3A2F2A; --chip:#2B231F;
+  --ember:#FF6B2C; --ember-ink:#1A0B03; --ember-soft:#3B2016; --ok:#5CC28A; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));-webkit-tap-highlight-color:transparent}
+.wrap{max-width:640px;margin:0 auto}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--ember);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;letter-spacing:-.3px}
+header.top{padding-block:22px 10px}
+h1{font-size:clamp(32px,9vw,44px);line-height:1;display:flex;align-items:center;gap:10px}
+h1 svg{width:.9em;height:.9em;flex:none}
+.sub{color:var(--muted);font-size:14px;margin:8px 0 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:12px}
+.card h2{font-size:20px;display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.n{font-family:var(--body);font-weight:700;font-size:13px;width:24px;height:24px;border-radius:50%;background:var(--ember);color:var(--ember-ink);display:grid;place-items:center;flex:none}
+.hint{color:var(--muted);font-size:13px;margin:10px 0 0}
+.dgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.dopt{border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:10px 6px 8px;display:grid;justify-items:center;gap:4px;text-align:center}
+.dopt svg{width:100%;max-width:84px;height:auto}
+.dopt b{font-size:14px;line-height:1.2}
+.dopt small{color:var(--muted);font-size:12px}
+.dopt[aria-pressed="true"]{border-color:var(--ember);background:var(--ember-soft)}
+.dnote{margin:12px 0 0;font-size:14px;background:var(--chip);border-radius:10px;padding:10px 12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:9px 15px;font-size:15px;line-height:1.2}
+.chip[aria-pressed="true"]{border-color:var(--ember);background:var(--ember);color:var(--ember-ink);font-weight:700}
+.chip small{font-size:12px;opacity:.85;margin-left:4px}
+.thk{display:flex;align-items:baseline;gap:4px;margin-bottom:6px}
+.thk output{font-family:var(--display);font-size:42px;line-height:1}
+.thk span{color:var(--muted);font-size:16px}
+input[type=range]{width:100%;accent-color:var(--ember);height:32px}
+.ticks{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;padding:0 2px}
+.stepper{display:flex;align-items:center;gap:14px}
+.stepper button{width:48px;height:48px;border-radius:12px;border:1px solid var(--line);background:var(--chip);font-size:24px;line-height:1}
+.stepper .val{font-family:var(--display);font-size:36px;min-width:110px;text-align:center}
+.stepper .val small{font-family:var(--body);font-size:15px;color:var(--muted);margin-left:2px}
+.row{display:flex;gap:14px;align-items:center}
+.row p{margin:2px 0 0}
+.switch{position:relative;width:52px;height:30px;flex:none}
+.switch input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.switch span{position:absolute;inset:0;background:var(--line);border-radius:99px;transition:.2s;pointer-events:none}
+.switch span::after{content:"";position:absolute;left:3px;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgb(0 0 0/.25)}
+.switch input:checked+span{background:var(--ember)}
+.switch input:checked+span::after{transform:translateX(22px)}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:12px max(16px,env(safe-area-inset-left,0px)) calc(12px + env(safe-area-inset-bottom,0px));
+  background:linear-gradient(to top,var(--bg) 70%,transparent);z-index:5}
+.bar .in{max-width:640px;margin:0 auto;display:flex;gap:8px}
+.cta{flex:1;min-height:56px;border:0;border-radius:16px;background:var(--ember);color:var(--ember-ink);font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 16px}
+.cta.dark{background:var(--fg);color:var(--bg)}
+.ghost{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 14px;font-size:14px;font-weight:600}
+.back{display:inline-flex;align-items:center;gap:4px;margin-top:16px}
+.hero{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center}
+.hero svg{width:120px;height:auto}
+.hero h2{font-size:28px;margin-bottom:4px}
+.hero p{margin:0;color:var(--muted);font-size:14px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.stat{background:var(--chip);border-radius:12px;padding:10px 12px}
+.stat small{display:block;color:var(--muted);font-size:12px}
+.stat b{font-family:var(--display);font-weight:400;font-size:22px;line-height:1.2}
+.stat.hot{background:var(--ember-soft)}
+.stat.hot b{color:var(--ember)}
+ul.need{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:6px 12px}
+ul.need li{display:flex;gap:8px;align-items:baseline;font-size:14px}
+ul.need li::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ember);flex:none;transform:translateY(-2px)}
+ul.need li span{color:var(--muted);font-size:12px}
+.phase{font-size:12px;font-weight:700;color:var(--ember);margin:14px 0 6px;letter-spacing:.5px}
+.phase:first-child{margin-top:0}
+.pstep{display:grid;grid-template-columns:1fr auto;gap:10px;padding:9px 0;border-top:1px solid var(--line);align-items:baseline}
+.pstep b{font-size:15px;font-weight:600}
+.pstep p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.pstep time{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.note{font-size:13px;color:var(--muted);margin:12px 2px 0}
+/* 진행 화면 */
+#run{padding-top:14px}
+.runtop{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.dots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;flex:1}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.dots i.done{background:var(--muted)}
+.dots i.now{background:var(--ember);width:20px;border-radius:4px}
+.stepcard{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px 18px 20px;margin-top:14px;text-align:center}
+.stepno{margin:0;color:var(--ember);font-weight:700;font-size:13px}
+.stepcard h2{font-size:clamp(26px,7.5vw,34px);margin:4px 0 0;line-height:1.15}
+.ring{position:relative;width:min(70vw,250px);aspect-ratio:1;margin:16px auto 10px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:14}
+.ring .bgc{stroke:var(--chip)}
+.ring .arc{stroke:var(--ember);stroke-linecap:round;transition:stroke-dashoffset .25s linear}
+.ring .mid{position:absolute;inset:0;display:grid;place-content:center;gap:2px}
+.time{font-family:var(--display);font-size:clamp(52px,16vw,68px);line-height:1;font-variant-numeric:tabular-nums}
+.tlabel{color:var(--muted);font-size:13px}
+.ring.paused .time{opacity:.45}
+.ring.idle .arc{stroke:var(--line)}
+.notimer{font-size:48px;margin:18px 0 6px}
+.rtext{text-align:left;font-size:16px;margin:8px 0 0;line-height:1.65}
+.rtip{text-align:left;font-size:14px;color:var(--muted);background:var(--chip);border-radius:12px;padding:10px 12px;margin:12px 0 0}
+.rtip b{color:var(--fg)}
+.temp{text-align:left;font-size:14px;background:var(--ember-soft);border-radius:12px;padding:10px 12px;margin:10px 0 0}
+.ctrls{display:grid;gap:8px;margin-top:16px}
+.ctrls .two{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.ctrls .ghost{min-height:50px;font-size:15px}
+.next{margin-top:12px;font-size:14px;color:var(--muted);text-align:center}
+.next b{color:var(--fg)}
+.flash{position:fixed;inset:0;z-index:20;background:var(--ember);color:var(--ember-ink);display:grid;place-content:center;text-align:center;padding:24px;
+  font-family:var(--display);font-size:clamp(40px,12vw,64px);line-height:1.15;animation:fl .5s ease 3 alternate}
+.flash small{display:block;font-family:var(--body);font-size:16px;margin-top:16px;opacity:.85}
+@keyframes fl{from{opacity:1}to{opacity:.82}}
+.sound{display:inline-flex;align-items:center;gap:6px}
+.done-big{font-size:64px;margin:10px 0 0}
+@media (prefers-reduced-motion: reduce){.flash{animation:none}.ring .arc{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- 1. 고르기 -->
+<section id="setup">
+  <header class="top">
+    <h1><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="27" y="2" width="10" height="8" rx="2" fill="var(--ember)"/><circle cx="32" cy="36" r="26" fill="#6B2E17"/><circle cx="32" cy="36" r="20" fill="#C9A092"/><circle cx="32" cy="36" r="15" fill="#D2435A"/></svg>스테이크</h1>
+    <p class="sub">원하는 굽기를 고르면 시즈닝부터 굽기·레스팅까지 초 단위로 알려줘요.</p>
+  </header>
+
+  <div class="card">
+    <h2><span class="n">1</span>원하는 굽기</h2>
+    <div class="dgrid" id="dgrid"></div>
+    <p class="dnote" id="dnote"></p>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">2</span>부위</h2>
+    <div class="chips" id="cuts"></div>
+    <p class="hint" id="cutnote"></p>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">3</span>고기 두께</h2>
+    <div class="thk"><output id="thkv">2.5</output><span>cm</span></div>
+    <input type="range" id="thk" min="1.5" max="5" step="0.5" value="2.5" aria-label="고기 두께">
+    <div class="ticks"><span>1.5</span><span>2.5</span><span>3.5</span><span>5</span></div>
+    <p class="hint">시간을 정하는 가장 중요한 값이에요. 자가 없다면 500원 동전(지름 약 2.7cm)을 고기 옆에 세워 비교해 보세요.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">4</span>고기 무게 <small style="font-family:var(--body);font-size:13px;color:var(--muted)">한 장 기준</small></h2>
+    <div class="stepper"><button type="button" data-w="-50" aria-label="50그램 빼기">−</button><div class="val"><span id="wv">300</span><small>g</small></div><button type="button" data-w="50" aria-label="50그램 더하기">+</button></div>
+    <p class="hint">소금·버터 양을 이 무게에 맞춰 계산해요.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">5</span>팬 종류</h2>
+    <div class="chips" id="pans"></div>
+    <p class="hint" id="pannote"></p>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">6</span>시간 여유</h2>
+    <div class="chips" id="times"></div>
+    <p class="hint" id="timenote"></p>
+  </div>
+
+  <div class="card row">
+    <label class="switch"><input type="checkbox" id="butter" checked aria-label="버터 베이스팅"><span></span></label>
+    <div><b>버터 베이스팅</b><p class="hint" style="margin-top:2px">마지막 1분, 녹인 버터와 마늘을 끼얹어 향과 윤기를 더해요.</p></div>
+  </div>
+
+  <div class="bar"><div class="in"><button class="cta" id="toPlan" type="button">굽기 계획 보기</button></div></div>
+</section>
+
+<!-- 2. 계획 -->
+<section id="plan" hidden>
+  <button class="ghost back" id="backSetup" type="button">← 다시 고르기</button>
+  <div class="card">
+    <div class="hero"><div id="pSvg"></div><div><h2 id="pName"></h2><p id="pDesc"></p></div></div>
+    <div class="stats" id="pStats"></div>
+  </div>
+  <div class="card">
+    <h2>준비물</h2>
+    <ul class="need" id="pNeed"></ul>
+  </div>
+  <div class="card">
+    <h2>순서</h2>
+    <div id="pSteps"></div>
+  </div>
+  <p class="note">시간은 고기 두께·불 세기·팬에 따라 조금씩 달라져요. 정말 정확하게 굽고 싶다면 바늘형 고기 온도계를 함께 쓰세요. 앱이 단계마다 불에서 내릴 온도를 알려드려요.</p>
+  <div class="bar"><div class="in"><button class="cta" id="startRun" type="button">타이머 시작</button></div></div>
+</section>
+
+<!-- 3. 진행 -->
+<section id="run" hidden>
+  <div class="runtop">
+    <button class="ghost" id="quit" type="button">그만하기</button>
+    <div class="dots" id="dots"></div>
+    <button class="ghost sound" id="voice" type="button" aria-pressed="true">음성 켬</button>
+  </div>
+  <div class="stepcard">
+    <p class="stepno" id="rno"></p>
+    <h2 id="rtitle"></h2>
+    <div class="ring" id="ring">
+      <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="bgc" cx="60" cy="60" r="52"/><circle class="arc" id="arc" cx="60" cy="60" r="52"/></svg>
+      <div class="mid"><div class="time" id="rtime" role="timer" aria-live="off">0:00</div><div class="tlabel" id="rlabel"></div></div>
+    </div>
+    <div class="notimer" id="rnotimer" hidden></div>
+    <p class="rtext" id="rtext"></p>
+    <p class="temp" id="rtemp" hidden></p>
+    <p class="rtip" id="rtip" hidden></p>
+    <div class="ctrls" id="ctrls"></div>
+  </div>
+  <p class="next" id="rnext"></p>
+  <p class="note" id="iosnote" hidden>아이폰은 화면이 꺼지거나 다른 앱으로 가면 알람이 울리지 않아요. 굽는 동안은 이 화면을 켜둔 채로 두세요.</p>
+</section>
+
+</div>
+<div class="flash" id="flash" hidden role="alert"></div>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const BR=window.SteakApp||null;           // 안드로이드 앱에서만 있음
+const isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+
+/* ───── 기준 자료 ───── */
+const D=[
+ {k:"blue",n:"블루",pull:46,fin:"약 49°C",c:"#7d1630",band:.05,desc:"겉만 바삭하게 지지고 속은 거의 날것이에요. 차갑지 않을 만큼만 따뜻해요."},
+ {k:"rare",n:"레어",pull:49,fin:"약 52°C",c:"#b4213a",band:.09,desc:"속이 진한 붉은색이고 아주 촉촉하고 부드러워요."},
+ {k:"mr",n:"미디엄 레어",pull:53,fin:"약 56°C",c:"#d2435a",band:.13,desc:"가운데가 선홍색이에요. 육즙과 식감의 균형이 가장 좋아 셰프들이 가장 많이 권해요."},
+ {k:"m",n:"미디엄",pull:58,fin:"약 61°C",c:"#de7c86",band:.2,desc:"가운데가 분홍빛이고 씹는 맛이 조금 더 생겨요."},
+ {k:"mw",n:"미디엄 웰",pull:63,fin:"약 66°C",c:"#c99a8c",band:.32,desc:"가운데에 옅은 분홍빛만 살짝 남아요."},
+ {k:"w",n:"웰던",pull:68,fin:"71°C 이상",c:"#9a7a6c",band:.62,desc:"속까지 회갈색으로 완전히 익어요. 붉은 기가 전혀 없어요."}
+];
+// 두께별 총 굽는 시간(분). 무쇠·스테인리스 팬 센불, 실온에 둔 고기 기준
+const TH=[1.5,2,2.5,3,3.5,4,4.5,5];
+const TM={blue:[1.5,2,3,4,5,6,7,8],rare:[2.5,3.5,5,6.5,8,9,10.5,12],mr:[3.5,5,6.5,8,9.5,11,12.5,14],
+  m:[4.5,6,8,10,12,13.5,15,17],mw:[5.5,7.5,10,12,14,16,18,20],w:[7,9.5,12,14.5,17,19,21,23]};
+const CUTS=[
+ {k:"ribeye",n:"꽃등심",fat:true,note:"마블링이 많아 기름이 많이 나와요. 가장자리 지방부터 세워 녹이고, 식용유는 반 큰술이면 충분해요."},
+ {k:"sirloin",n:"채끝",fat:true,note:"한쪽에 지방 띠가 있어요. 지방을 먼저 세워 녹이면 그 기름으로 더 고소하게 구워져요."},
+ {k:"tender",n:"안심",lean:true,note:"지방이 거의 없어 오래 구우면 퍽퍽해져요. 미디엄 레어까지를 권하고, 버터 베이스팅이 특히 잘 어울려요."},
+ {k:"flat",n:"부채살",note:"가운데로 질긴 힘줄이 한 줄 지나가요. 다 구운 뒤 힘줄 양옆으로 잘라내고 드세요."},
+ {k:"chuck",n:"살치살",note:"마블링이 많고 얇은 편이라 센불에 짧게 굽는 게 좋아요."},
+ {k:"etc",n:"그 밖의 부위",note:"두께만 정확히 넣으면 같은 원리로 시간이 계산돼요."}
+];
+const PANS=[
+ {k:"iron",n:"무쇠팬",mult:1,pre:240,heat:"센불",note:"열을 오래 머금어 고기를 올려도 온도가 잘 안 떨어져요. 스테이크에 가장 좋은 팬이에요.",
+  pt:"빈 팬을 센불에 올려 4분 동안 충분히 달궈요. 무쇠팬은 천천히 달궈지는 대신 한번 달궈지면 고기를 올려도 온도가 잘 안 떨어져요."},
+ {k:"steel",n:"스테인리스팬",mult:1,pre:180,heat:"센불",note:"충분히 달구면 무쇠팬만큼 잘 구워져요. 덜 달구면 고기가 들러붙어요.",
+  pt:"빈 팬을 센불에 3분 달궈요. 물 한 방울을 떨어뜨렸을 때 바로 증발하지 않고 구슬처럼 데굴데굴 굴러다니면 딱 좋은 온도예요."},
+ {k:"coat",n:"코팅팬",mult:1.2,pre:120,heat:"중강불",note:"코팅이 상하지 않게 중강불로 굽기 때문에 시간이 20% 정도 더 길게 계산돼요.",
+  pt:"코팅팬은 빈 채로 센불에 두면 코팅이 상해요. 중강불에서 2분만 달궈요."}
+];
+const TIMES=[
+ {k:"brine",n:"40분 이상 여유 있어요",tag:"추천",note:"소금을 미리 뿌려 40분 두면 간이 속까지 배고 겉이 말라 크러스트가 훨씬 잘 생겨요. 실온에서 덜 차가워져 속도 고르게 익어요."},
+ {k:"now",n:"지금 바로 구울래요",note:"냉장고에서 막 꺼낸 차가운 고기 기준으로 시간을 조금 늘려 계산해요. 소금은 팬에 올리기 직전에 뿌려요."}
+];
+
+let S=Object.assign({d:"mr",cut:"ribeye",t:2.5,w:300,pan:"iron",time:"brine",butter:true},store.get("steak-set",{}));
+
+/* ───── 단면 그림 ───── */
+function steakSvg(dk,size){
+  const d=D.find(x=>x.k===dk); const W=120,H=80;
+  const crust=6, inner={x:crust,y:crust,w:W-crust*2,h:H-crust*2};
+  const bandPx=Math.max(2,Math.min(inner.h/2-1,d.band*inner.h));
+  const core={x:inner.x+bandPx,y:inner.y+bandPx,w:inner.w-bandPx*2,h:inner.h-bandPx*2};
+  return `<svg viewBox="0 0 ${W} ${H}" ${size?`width="${size}"`:""} aria-hidden="true">
+  <rect x="0" y="0" width="${W}" height="${H}" rx="22" fill="#5a2a16"/>
+  <rect x="${inner.x}" y="${inner.y}" width="${inner.w}" height="${inner.h}" rx="17" fill="#a9877a"/>
+  ${core.h>2?`<rect x="${core.x}" y="${core.y}" width="${core.w}" height="${core.h}" rx="${Math.max(4,17-bandPx)}" fill="${d.c}"/>`:""}
+  <path d="M14 10 L30 10 M44 10 L60 10" stroke="#3a1a0c" stroke-width="3" stroke-linecap="round" opacity=".5"/></svg>`;
+}
+
+/* ───── 고르기 화면 ───── */
+function renderSetup(){
+  $("dgrid").innerHTML=D.map(d=>`<button type="button" class="dopt" data-d="${d.k}" aria-pressed="${S.d===d.k}">${steakSvg(d.k)}<b>${d.n}</b><small>${d.fin}</small></button>`).join("");
+  const d=D.find(x=>x.k===S.d), cut=CUTS.find(x=>x.k===S.cut);
+  let dn=`<b>${d.n}</b> · ${d.desc}`;
+  if(cut.lean&&(S.d==="mw"||S.d==="w")) dn+=` <br><b style="color:var(--ember)">안심은 미디엄 웰 이상으로 구우면 퍽퍽해지기 쉬워요.</b>`;
+  $("dnote").innerHTML=dn;
+  $("cuts").innerHTML=CUTS.map(c=>`<button type="button" class="chip" data-cut="${c.k}" aria-pressed="${S.cut===c.k}">${c.n}</button>`).join("");
+  $("cutnote").textContent=cut.note;
+  $("thk").value=S.t; $("thkv").textContent=S.t;
+  $("wv").textContent=S.w;
+  $("pans").innerHTML=PANS.map(p=>`<button type="button" class="chip" data-pan="${p.k}" aria-pressed="${S.pan===p.k}">${p.n}</button>`).join("");
+  $("pannote").textContent=PANS.find(p=>p.k===S.pan).note;
+  $("times").innerHTML=TIMES.map(t=>`<button type="button" class="chip" data-time="${t.k}" aria-pressed="${S.time===t.k}">${t.n}${t.tag?`<small>${t.tag}</small>`:""}</button>`).join("");
+  $("timenote").textContent=TIMES.find(t=>t.k===S.time).note;
+  $("butter").checked=S.butter;
+  store.set("steak-set",S);
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-d],[data-cut],[data-pan],[data-time],[data-w]"); if(!b) return;
+  if(b.dataset.d) S.d=b.dataset.d;
+  if(b.dataset.cut) S.cut=b.dataset.cut;
+  if(b.dataset.pan) S.pan=b.dataset.pan;
+  if(b.dataset.time) S.time=b.dataset.time;
+  if(b.dataset.w) S.w=Math.min(1000,Math.max(100,S.w+ +b.dataset.w));
+  renderSetup();
+});
+$("thk").addEventListener("input",e=>{S.t=+e.target.value;$("thkv").textContent=S.t;store.set("steak-set",S)});
+$("butter").addEventListener("change",e=>{S.butter=e.target.checked;store.set("steak-set",S)});
+
+/* ───── 계산 ───── */
+const r15=x=>Math.max(15,Math.round(x/15)*15);
+function fmt(s){s=Math.max(0,Math.ceil(s));const m=Math.floor(s/60),r=s%60;return m+":"+String(r).padStart(2,"0")}
+function fmtK(s){s=Math.round(s);const m=Math.floor(s/60),r=s%60;return m&&r?`${m}분 ${r}초`:m?`${m}분`:`${r}초`}
+function tsp(g){const q=Math.round(g/5.5*4)/4;if(q<=0)return "한 꼬집";const w=Math.floor(q),f=q-w;const fr={.25:"¼",.5:"½",.75:"¾"}[f]||"";return w?(fr?`${w}과 ${fr}`:`${w}`)+"작은술":fr+"작은술"}
+
+function build(){
+  const d=D.find(x=>x.k===S.d), cut=CUTS.find(x=>x.k===S.cut), pan=PANS.find(x=>x.k===S.pan);
+  const i=TH.indexOf(S.t);
+  const total=r15(TM[S.d][i]*60*pan.mult*(S.time==="now"?1.12:1));
+  const salt=Math.round(S.w*0.01*10)/10;
+  const butterG=Math.min(40,Math.max(15,Math.round(S.w/15/5)*5));
+  const oil=cut.fat?"식용유 반 큰술":"식용유 1큰술";
+  const baste=S.butter&&total>=150?60:0;
+  const st=[];
+  const tempLine=`온도계가 있다면 가장 두꺼운 가운데를 옆에서 찔러 <b>${d.pull}°C</b>가 되면 시간이 남았어도 바로 꺼내세요. 레스팅하며 ${d.fin}까지 올라가요.`;
+
+  // 시즈닝
+  if(S.time==="brine") st.push({ph:"시즈닝",t:"물기 닦고 소금 뿌리기",dur:2400,wait:true,start:"소금 뿌렸어요, 40분 시작",
+    x:`키친타월로 고기 겉면의 물기를 꾹꾹 눌러 닦아요. 소금 <b>${salt}g</b>(고운 소금 ${tsp(salt)})을 30cm쯤 높이에서 앞뒤와 옆면까지 고르게 뿌려요. 랩을 씌우지 말고 접시에 올려 실온에 둡니다.`,
+    tip:`<b>왜 40분일까요?</b> 소금을 뿌리면 처음엔 물이 배어 나오다가 30~40분이 지나면 다시 고기 속으로 스며들어요. 뿌리고 5~30분 사이에 구우면 겉이 축축해서 크러스트가 잘 안 생겨요. 실온 40분은 위생상 괜찮아요.`});
+  else st.push({ph:"시즈닝",t:"물기 닦기",dur:0,wait:true,start:"다 닦았어요",
+    x:"키친타월로 고기 겉면의 물기를 꾹꾹 눌러 완전히 닦아요. 물기가 남아 있으면 구워지는 대신 쪄져서 겉이 갈색으로 변하지 않아요.",
+    tip:"<b>소금은 아직이에요.</b> 소금을 뿌리고 몇 분 지나면 물이 배어 나와요. 팬에 올리기 바로 직전에 뿌릴게요."});
+
+  // 예열
+  st.push({ph:"예열",t:"팬 달구기",dur:pan.pre,wait:true,start:"불 켰어요, 시작",say:S.time==="brine"?"40분이 지났어요. 팬을 달굴 차례예요":"",
+    x:pan.pt,
+    tip:`이 동안 ${S.butter?"버터·마늘·":""}집게·도마를 손 닿는 곳에 꺼내두세요. 굽기 시작하면 손이 바빠져요.${S.butter?" 마늘 2~3쪽은 칼 옆면으로 눌러 으깨두세요.":""}`});
+
+  // 굽기
+  const putSalt=S.time==="now"?` 고기 앞뒤에 소금 <b>${salt}g</b>(고운 소금 ${tsp(salt)})을 뿌리고,`:"";
+  const put=`${oil}을 두르고 기름이 일렁이며 연기가 살짝 피어오르면,${putSalt} 후추를 갈아 뿌린 뒤`;
+  const cook=[];
+  if(cut.fat) cook.push({t:"지방 쪽 세워 굽기",dur:60,say:"팬이 다 달궈졌어요. 기름을 두르고 고기를 세워 올리세요",
+    x:`${put} 집게로 고기를 세워 가장자리 지방을 팬에 대요. 지방이 녹아 나온 기름이 고기를 굽는 기름이 돼요.`,
+    tip:"후추는 센불에 오래 닿으면 쓴맛이 날 수 있어요. 싫다면 다 구운 뒤에 뿌려도 돼요."});
+  const sideA=`고기를 올린 뒤에는 <b>절대 건드리지 마세요.</b> 누르거나 들춰보면 크러스트가 생기지 않아요. 지글지글 소리가 크게 계속 나야 정상이에요. 소리가 약해지면 불을 한 단계 올리세요.`;
+  const flipX="집게로 뒤집어서, 방금 있던 자리 말고 팬의 다른 곳(더 뜨거운 곳)에 올려요.";
+  const basteX=`불을 중불로 줄이고 버터 <b>${butterG}g</b>, 으깬 마늘, 허브를 넣어요. 팬을 내 쪽으로 기울여 거품 나는 버터를 숟가락으로 떠서 고기 위에 계속 끼얹어요.`;
+  const first={say:cut.fat?"고기를 눕혀서 앞면을 구우세요":"팬이 다 달궈졌어요. 기름을 두르고 고기를 올리세요"};
+  const thick=S.t>3&&total-240>=60;
+  if(!thick){
+    const a=r15(total/2), b=total-a;
+    cook.push({t:"앞면 굽기",dur:a,...first,x:(cut.fat?"고기를 눕혀 지방이 녹은 자리에 올려요. ":`${put} 고기를 올려요. `)+sideA});
+    if(baste&&b-baste>=15){
+      cook.push({t:"뒤집어서 뒷면 굽기",dur:b-baste,say:"뒤집으세요",x:flipX});
+      cook.push({t:"버터 넣고 끼얹기",dur:baste,say:"불을 줄이고 버터를 넣으세요",x:basteX,temp:true});
+    }else cook.push({t:"뒤집어서 뒷면 굽기",dur:b,say:"뒤집으세요",x:flipX,temp:true});
+  }else{
+    cook.push({t:"앞면 굽기",dur:120,...first,x:(cut.fat?"고기를 눕혀 지방이 녹은 자리에 올려요. ":`${put} 고기를 올려요. `)+sideA});
+    cook.push({t:"뒤집어서 뒷면 굽기",dur:120,say:"뒤집으세요",x:flipX});
+    const rem=total-240, n=Math.ceil(rem/60);
+    for(let j=0;j<n;j++){
+      const dur=j<n-1?60:rem-60*(n-1);
+      const last=j===n-1;
+      if(last&&baste&&n>=2){cook.push({t:"버터 넣고 끼얹기",dur,say:"버터를 넣고 끼얹으세요",x:basteX,temp:true,grp:"basteThick"});continue}
+      cook.push({t:`중불로 줄이고 뒤집기 ${j+1}/${n}`,grp:"flip",dur,say:j===0?"불을 중불로 줄이고 뒤집으세요":"뒤집으세요",
+        x:j===0?"두꺼운 고기라 겉이 타지 않게 이제부터 <b>중불</b>로 줄이고, 알람이 울릴 때마다 뒤집어요. 자주 뒤집으면 속까지 고르게 익어요. 중간에 한 번은 집게로 고기를 세워 옆면도 10초씩 돌려가며 지져주세요.":flipX,temp:last});
+    }
+  }
+  cook[0].wait=true; cook[0].start="고기 올렸어요, 시작";
+  cook.forEach(c=>{c.ph="굽기"; if(c.temp) c.tempLine=tempLine});
+  st.push(...cook);
+  const cookSec=cook.reduce((a,c)=>a+c.dur,0);
+
+  // 레스팅
+  const rest=Math.min(600,Math.max(240,Math.round(total/2/30)*30));
+  st.push({ph:"레스팅",t:"불에서 내려 쉬게 두기",dur:rest,say:"불을 끄고 고기를 꺼내세요. 레스팅을 시작합니다",
+    x:`고기를 꺼내 도마나 식힘망 위에 올려 그대로 둬요. 호일은 위에 느슨하게 덮기만 하세요. 꽉 싸면 크러스트가 눅눅해져요.`,
+    tip:`<b>왜 쉬게 둘까요?</b> 이 동안 속 온도가 2~4°C 더 올라 ${d.n}가 완성되고, 육즙이 고기 속에 자리를 잡아요. 바로 썰면 육즙이 도마로 다 흘러나와요.`});
+  // 썰기
+  st.push({ph:"완성",t:"결 반대로 썰기",dur:0,last:true,say:"레스팅 끝! 이제 썰어서 드세요",
+    x:`고기의 결(근육 줄무늬)을 찾아 결과 직각 방향으로 1~1.5cm 두께로 썰어요. 팬에 남은 ${S.butter?"버터를":"기름을"} 위에 끼얹고, 굵은 소금을 조금 올리면 완성!`,
+    tip:cut.k==="flat"?"부채살은 가운데 힘줄 양옆으로 잘라낸 뒤 썰면 훨씬 부드러워요.":"결대로 썰면 질기고, 결 반대로 썰면 같은 고기도 훨씬 부드러워요."});
+
+  st.forEach(x=>{if(x.say===undefined)x.say=""});
+  return {steps:st,d,cut,pan,total:cookSec,rest,salt,butterG,oil,set:Object.assign({},S)};
+}
+
+/* ───── 계획 화면 ───── */
+let P=null;
+function renderPlan(){
+  P=build(); const {d,cut,pan}=P;
+  $("pSvg").innerHTML=steakSvg(d.k);
+  $("pName").textContent=`${d.n} · ${cut.n}`;
+  $("pDesc").textContent=`${S.t}cm · ${S.w}g · ${pan.n} ${pan.heat}`;
+  const pre=P.steps.filter(s=>s.ph==="시즈닝"||s.ph==="예열").reduce((a,s)=>a+s.dur,0);
+  $("pStats").innerHTML=`
+    <div class="stat hot"><small>굽는 시간</small><b>${fmtK(P.total)}</b></div>
+    <div class="stat"><small>레스팅</small><b>${fmtK(P.rest)}</b></div>
+    <div class="stat"><small>처음부터 끝까지</small><b>약 ${Math.round((pre+P.total+P.rest)/60)+2}분</b></div>
+    <div class="stat"><small>불에서 내릴 속 온도</small><b>${d.pull}°C</b></div>`;
+  const need=[`소금 <span>${P.salt}g · ${tsp(P.salt)}</span>`,"통후추",`식용유 <span>${cut.fat?"반 큰술":"1큰술"}</span>`];
+  if(S.butter) need.push(`버터 <span>${P.butterG}g</span>`,"마늘 <span>2~3쪽</span>","로즈마리·타임 <span>있으면 1~2줄기</span>");
+  need.push("키친타월","집게","도마 또는 식힘망","고기 온도계 <span>있으면</span>");
+  $("pNeed").innerHTML=need.map(x=>`<li><div>${x}</div></li>`).join("");
+  let html="", lastPh="";
+  const rows=[];
+  P.steps.forEach(s=>{
+    const prev=rows[rows.length-1];
+    if(s.grp==="flip"&&prev&&prev.grp==="flip"){prev.dur+=s.dur;prev.cnt++;return}
+    rows.push(Object.assign({cnt:1},s));
+  });
+  rows.forEach(s=>{
+    if(s.ph!==lastPh){html+=`<p class="phase">${s.ph}</p>`;lastPh=s.ph}
+    const title=s.grp==="flip"?`중불로 줄이고 1분마다 뒤집기 × ${s.cnt}번`:s.t;
+    const sub=s.wait&&s.ph==="굽기"?"팬에 올리면서 시작":s.wait&&s.dur?"준비되면 시작":"";
+    html+=`<div class="pstep"><div><b>${title}</b>${sub?`<p>${sub}</p>`:""}</div><time>${s.dur?fmtK(s.dur):"—"}</time></div>`;
+  });
+  $("pSteps").innerHTML=html;
+}
+$("toPlan").onclick=()=>{renderPlan();show("plan");scrollTo(0,0)};
+$("backSetup").onclick=()=>{show("setup");scrollTo(0,0)};
+
+function show(k){for(const id of ["setup","plan","run"]) $(id).hidden=id!==k}
+
+/* ───── 소리·음성·진동 ───── */
+let ac=null, voiceOn=store.get("steak-voice",true);
+function primeAudio(){
+  try{ if(!ac){const C=window.AudioContext||window.webkitAudioContext; if(C) ac=new C()} if(ac&&ac.state==="suspended") ac.resume() }catch(e){}
+  try{ if(!BR&&"speechSynthesis" in window){const u=new SpeechSynthesisUtterance(" ");u.volume=0;speechSynthesis.speak(u)} }catch(e){}
+}
+function beep(times,freq){
+  if(!ac) return;
+  try{ const t0=ac.currentTime;
+    for(let k=0;k<times;k++){const o=ac.createOscillator(),g=ac.createGain();o.type="square";o.frequency.value=freq||880;
+      const s=t0+k*0.28;g.gain.setValueAtTime(0.0001,s);g.gain.exponentialRampToValueAtTime(0.35,s+0.02);g.gain.exponentialRampToValueAtTime(0.0001,s+0.2);
+      o.connect(g).connect(ac.destination);o.start(s);o.stop(s+0.22)} }catch(e){}
+}
+function speak(t){
+  if(!voiceOn||!t) return;
+  try{ if(BR&&BR.speak){BR.speak(t);return}
+    if("speechSynthesis" in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="ko-KR";u.rate=1;speechSynthesis.speak(u)} }catch(e){}
+}
+function cue(step){
+  beep(step.wait||step.last?5:3, step.wait||step.last?988:880);
+  try{navigator.vibrate&&navigator.vibrate([250,120,250,120,500])}catch(e){}
+  setTimeout(()=>speak(step.say||step.t),900);
+  const f=$("flash"); f.innerHTML=`${step.say||step.t}<small>화면을 누르면 닫혀요</small>`; f.hidden=false;
+  clearTimeout(cue.h); cue.h=setTimeout(()=>f.hidden=true,4000);
+}
+$("flash").onclick=()=>$("flash").hidden=true;
+function setVoiceBtn(){$("voice").textContent=voiceOn?"음성 켬":"음성 끔";$("voice").setAttribute("aria-pressed",voiceOn)}
+$("voice").onclick=()=>{voiceOn=!voiceOn;store.set("steak-voice",voiceOn);setVoiceBtn();primeAudio()};
+
+/* ───── 화면 꺼짐 방지 ───── */
+let lock=null;
+async function wake(on){
+  try{ if(on){ if(!lock&&"wakeLock" in navigator){lock=await navigator.wakeLock.request("screen");lock.addEventListener("release",()=>lock=null)} }
+       else if(lock){await lock.release();lock=null} }catch(e){}
+}
+
+/* ───── 타이머 ───── */
+// R: {steps, idx, status:'waiting'|'running'|'paused'|'done', endAt, remain}
+let R=store.get("steak-run",null);
+function save(){ if(R) store.set("steak-run",R); else store.del("steak-run") }
+function schedule(){
+  if(!BR||!BR.schedule) return;
+  const out=[];
+  if(R&&R.status==="running"){
+    let t=R.endAt, i=R.idx;
+    while(true){
+      const nx=R.steps[i+1];
+      out.push({at:Math.round(t),title:nx?(nx.say||nx.t):"스테이크 완성",text:nx?nx.t:"맛있게 드세요"});
+      if(!nx||nx.wait||!nx.dur) break;
+      i++; t+=nx.dur*1000;
+    }
+  }
+  try{BR.schedule(JSON.stringify(out))}catch(e){}
+}
+function startStep(at){
+  const s=R.steps[R.idx];
+  if(s.dur>0){R.status="running";R.endAt=(at||Date.now())+s.dur*1000}
+  else R.status="waiting";
+}
+function advance(fromTimer){
+  const prevEnd=R.endAt;
+  R.idx++;
+  const s=R.steps[R.idx];
+  if(!s){R.status="done";save();schedule();renderRun();return}
+  const late=fromTimer?Date.now()-prevEnd:0;
+  if(fromTimer&&late<8000) cue(s);
+  if(!s.wait&&s.dur>0){R.status="running";R.endAt=(fromTimer?prevEnd:Date.now())+s.dur*1000}
+  else {R.status="waiting";R.endAt=0}
+}
+function tick(){
+  if(!R||$("run").hidden) return;
+  if(R.status==="running"&&Date.now()>=R.endAt){
+    let guard=0; while(R.status==="running"&&Date.now()>=R.endAt&&guard++<60) advance(true);
+    save(); schedule(); renderRun(); return;
+  }
+  renderTime();
+}
+setInterval(tick,250);
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden){ tick(); if(R&&R.status!=="done") wake(true) } });
+
+function renderTime(){
+  if(!R) return; const s=R.steps[R.idx]; if(!s||!s.dur) return;
+  let left = R.status==="running"?(R.endAt-Date.now())/1000 : R.status==="paused"?R.remain/1000 : s.dur;
+  left=Math.max(0,left);
+  $("rtime").textContent=fmt(left);
+  const C=2*Math.PI*52, total=Math.max(s.dur, left);
+  const arc=$("arc"); arc.style.strokeDasharray=C; arc.style.strokeDashoffset=C*(1-left/total);
+}
+function renderRun(){
+  show("run");
+  if(!R) return;
+  const steps=R.steps;
+  $("dots").innerHTML=steps.map((_,i)=>`<i class="${i<R.idx?"done":i===R.idx?"now":""}"></i>`).join("");
+  $("iosnote").hidden=!(isIOS&&!BR);
+  if(R.status==="done"){
+    $("rno").textContent="완성"; $("rtitle").textContent="맛있게 드세요!";
+    $("ring").hidden=true; $("rnotimer").hidden=false; $("rnotimer").innerHTML=steakSvg(R.d,140);
+    $("rtext").innerHTML="다음에도 같은 고기라면 오늘 결과를 보고 굽기를 한 단계 조절해 보세요. 두께만 정확하면 매번 같은 결과가 나와요.";
+    $("rtemp").hidden=true; $("rtip").hidden=true; $("rnext").textContent="";
+    $("ctrls").innerHTML=`<button class="cta" type="button" data-act="home">처음으로</button>`;
+    wake(false); return;
+  }
+  const s=steps[R.idx];
+  $("rno").textContent=`${s.ph} · ${R.idx+1}/${steps.length}단계`;
+  $("rtitle").textContent=s.t;
+  $("rtext").innerHTML=s.x;
+  $("rtemp").hidden=!s.tempLine; if(s.tempLine) $("rtemp").innerHTML=s.tempLine;
+  $("rtip").hidden=!s.tip; if(s.tip) $("rtip").innerHTML=s.tip;
+  const ring=$("ring");
+  if(s.dur>0){ring.hidden=false;$("rnotimer").hidden=true;ring.className="ring"+(R.status==="paused"?" paused":R.status==="waiting"?" idle":"");
+    $("rlabel").textContent=R.status==="running"?"남은 시간":R.status==="paused"?"일시정지":"준비되면 시작"}
+  else{ring.hidden=true;$("rnotimer").hidden=false;$("rnotimer").textContent=s.last?"🔪":"🧻"}
+  const nx=steps[R.idx+1];
+  $("rnext").innerHTML=nx?`다음: <b>${nx.grp==="flip"?"뒤집기":nx.t}</b>${nx.dur?` · ${fmtK(nx.dur)}`:""}${!nx.wait&&nx.dur&&s.dur?" (자동으로 이어져요)":""}`:"";
+  let c="";
+  if(R.status==="waiting"){
+    c=`<button class="cta" type="button" data-act="${s.dur?"start":"next"}">${s.last?"다 먹었어요":s.start||"시작"}</button>`;
+    if(s.dur&&s.ph==="시즈닝") c+=`<button class="ghost" type="button" data-act="next">40분 건너뛰고 바로 굽기</button>`;
+  }else if(R.status==="running"){
+    c=`<div class="two"><button class="ghost" type="button" data-act="pause">일시정지</button><button class="ghost" type="button" data-act="plus">+30초</button><button class="ghost" type="button" data-act="next">다음 단계</button></div>`;
+  }else if(R.status==="paused"){
+    c=`<button class="cta" type="button" data-act="resume">계속하기</button><div class="two"><button class="ghost" type="button" data-act="plus">+30초</button><button class="ghost" type="button" data-act="minus">−30초</button><button class="ghost" type="button" data-act="next">다음 단계</button></div>`;
+  }
+  $("ctrls").innerHTML=c;
+  renderTime();
+}
+$("ctrls").addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]"); if(!b||!R) return;
+  primeAudio();
+  const a=b.dataset.act, s=R.steps[R.idx];
+  if(a==="start"){startStep();wake(true)}
+  else if(a==="next"){
+    if(s&&s.last){R.status="done"}
+    else{ advance(false); const ns=R.steps[R.idx]; if(ns&&ns.say&&R.status==="running") speak(ns.say) }
+  }
+  else if(a==="pause"){R.remain=Math.max(0,R.endAt-Date.now());R.status="paused"}
+  else if(a==="resume"){R.endAt=Date.now()+R.remain;R.status="running"}
+  else if(a==="plus"){ if(R.status==="running")R.endAt+=30000; else R.remain+=30000 }
+  else if(a==="minus"){ R.remain=Math.max(1000,R.remain-30000) }
+  else if(a==="home"){R=null;save();schedule();wake(false);renderSetup();show("setup");scrollTo(0,0);return}
+  save();schedule();renderRun();
+});
+$("startRun").onclick=()=>{
+  primeAudio();
+  const p=build();
+  R={steps:p.steps,idx:0,status:"waiting",endAt:0,remain:0,d:p.d.k};
+  save();schedule();wake(true);renderRun();scrollTo(0,0);
+};
+$("quit").onclick=()=>{
+  if(R&&R.status!=="done"&&!confirm("타이머를 멈추고 처음 화면으로 갈까요?")) return;
+  R=null;save();schedule();wake(false);renderSetup();show("setup");scrollTo(0,0);
+};
+
+// 안드로이드 뒤로 가기
+window.onAndroidBack=function(){
+  if(!$("plan").hidden){show("setup");return true}
+  return false;
+};
+
+/* ───── 시작 ───── */
+setVoiceBtn();
+renderSetup();
+if(R&&R.steps&&R.status!=="done"){ renderRun(); tick(); }
+else { R=null; save(); }
+if("serviceWorker" in navigator&&location.protocol==="https:"){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}
+})();
+</script>
+</body>
+</html>

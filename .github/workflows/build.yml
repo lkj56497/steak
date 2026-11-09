@@ -1,0 +1,52 @@
+name: 안드로이드 설치 파일 만들기
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: 설치 파일 만들기
+        run: gradle assembleDebug --no-daemon --stacktrace
+
+      - name: 파일 이름 정리
+        run: cp app/build/outputs/apk/debug/app-debug.apk steak.apk
+
+      - name: 릴리스에 올리기
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest -y --cleanup-tag || true
+          gh release create latest steak.apk --title "스테이크 최신판" --notes "자동으로 만든 안드로이드 설치 파일" --latest
+
+      - name: 설치 사이트에 복사
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git fetch origin gh-pages
+          git worktree add pages origin/gh-pages
+          cp steak.apk pages/steak.apk
+          KB=$(( $(stat -c%s steak.apk) / 1024 ))
+          if [ "$KB" -ge 1024 ]; then SZ=$(awk "BEGIN{printf \"%.1fMB\", $KB/1024}"); else SZ="${KB}KB"; fi
+          sed -i -E "s#약 [0-9.]+(KB|MB)#약 ${SZ}#" pages/install.html
+          cd pages
+          git add steak.apk install.html
+          git commit -m "안드로이드 설치 파일 갱신" || exit 0
+          git push origin HEAD:gh-pages
